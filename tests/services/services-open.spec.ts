@@ -11,7 +11,7 @@ test('Services page opens', async ({ page }) => {
   });
 
   await test.step('Open Services page', async () => {
-    await page.goto('https://dev-dashboard.vigore.app/services');
+    await page.goto(`${process.env.DASHBOARD_URL}/services`);
 
     await expect(page).toHaveURL(/services/);
   });

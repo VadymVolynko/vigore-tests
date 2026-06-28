@@ -15,7 +15,7 @@ test('settings page opens', async ({ page }) => {
   });
 
   await test.step('Open Settings page', async () => {
-    await page.goto('https://dev-dashboard.vigore.app/settings');
+    await page.goto(`${process.env.DASHBOARD_URL}/settings`);
   });
 
   await test.step('Verify Settings page URL', async () => {

@@ -1,20 +1,14 @@
 import { test, expect } from '@playwright/test';
+import { login } from '../../helpers/auth.helper';
 
 test('Delete package', async ({ page, context }) => {
+  const email2 = process.env.TEST_EMAIL_2;
+  const password2 = process.env.TEST_PASSWORD_2;
+
   await context.clearCookies();
 
   await test.step('Login', async () => {
-    await page.goto('https://dev-landing.vigore.app/en/login');
-
-    await page
-      .getByRole('textbox', { name: 'Email' })
-      .fill('vadymvolynko+228@gmail.com');
-
-    await page
-      .getByRole('textbox', { name: 'Password' })
-      .fill('Test12345');
-
-    await page.getByRole('button', { name: 'Log in' }).click();
+    await login(page, email2, password2);
 
     await expect(page).toHaveURL(/dev-dashboard\.vigore\.app/, {
       timeout: 30000,
@@ -32,13 +26,15 @@ test('Delete package', async ({ page, context }) => {
   await test.step('Open package menu', async () => {
     await page.getByTestId('header').first().click();
 
-    await page.waitForTimeout(1000);
+    await expect(page.getByText('Delete').first()).toBeVisible();
   });
 
   await test.step('Click first Delete', async () => {
     await page.getByText('Delete').first().click();
 
-    await page.waitForTimeout(1000);
+    await expect(
+      page.getByRole('button', { name: 'Delete' }).last()
+    ).toBeVisible();
   });
 
   await test.step('Confirm Delete', async () => {

@@ -64,6 +64,10 @@ test('Create group service', async ({ page }) => {
     await expect(saveButton).toBeEnabled();
 
     await saveButton.click();
+
+    await expect(
+      page.getByText(/created successfully/i)
+    ).toBeVisible({ timeout: 10000 });
   });
 
   await test.step('Verify group service was created', async () => {

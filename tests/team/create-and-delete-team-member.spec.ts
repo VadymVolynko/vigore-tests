@@ -1,19 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { login } from '../../helpers/auth.helper';
 
 test('Create team member without services and locations', async ({ page }) => {
   const memberEmail = `vadymvolynko+${Date.now()}@gmail.com`;
+  const email2 = process.env.TEST_EMAIL_2;
+  const password2 = process.env.TEST_PASSWORD_2;
 
-  await page.goto('https://dev-landing.vigore.app/en/login');
-
-  await page
-    .getByRole('textbox', { name: 'Email' })
-    .fill('vadymvolynko+228@gmail.com');
-
-  await page
-    .getByRole('textbox', { name: 'Password' })
-    .fill('Test12345');
-
-  await page.getByRole('button', { name: 'Log in' }).click();
+  await login(page, email2, password2);
 
   await page.waitForURL(/dev-dashboard\.vigore\.app/, {
     timeout: 15000,
@@ -31,13 +24,28 @@ test('Create team member without services and locations', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Next' }).click();
 
-  // Пропускаем Services
+  // Skip Services step
   await page.getByRole('button', { name: 'Next' }).click();
 
-  // Пропускаем Locations
+  // Skip Locations step
   await page.getByRole('button', { name: 'Save' }).click();
 
   await expect(page.getByText(memberEmail)).toBeVisible({
     timeout: 15000,
   });
+
+  // Delete the created member to avoid test pollution
+  const memberRow = page.locator('tr').filter({ hasText: memberEmail });
+
+  await expect(memberRow).toBeVisible({ timeout: 10000 });
+
+  await memberRow.getByRole('button').last().click();
+
+  await expect(
+    page.getByRole('heading', { name: /delete/i })
+  ).toBeVisible({ timeout: 5000 });
+
+  await page.getByRole('button', { name: 'Delete' }).click();
+
+  await expect(memberRow).toHaveCount(0, { timeout: 10000 });
 });

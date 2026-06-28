@@ -18,7 +18,6 @@ test('Delete private service by price', async ({ page }) => {
     timeout: 15000,
   });
 
-  // Ищем сервис по цене
   const serviceRow = page
     .getByRole('row')
     .filter({ hasText: servicePrice })
@@ -30,27 +29,26 @@ test('Delete private service by price', async ({ page }) => {
 
   await serviceRow.scrollIntoViewIfNeeded();
 
-  // Клик по корзине
+  const countBefore = await page
+    .getByRole('row')
+    .filter({ hasText: servicePrice })
+    .count();
+
   await serviceRow.getByRole('button').last().click();
 
-  // Ждем открытия модалки
-  await page.waitForTimeout(2000);
+  await expect(
+    page.getByRole('button', { name: 'Delete' }).last()
+  ).toBeVisible({ timeout: 5000 });
 
-  // Клик Delete в окне подтверждения
   await page.getByRole('button', { name: 'Delete' }).last().click();
 
-  // Ждем завершения удаления
-  await page.waitForTimeout(3000);
-
-  // Проверка успешного удаления
   await expect(
     page.getByText(/deleted successfully/i)
   ).toBeVisible({
     timeout: 15000,
   });
 
-  // Проверяем что сервис исчез
   await expect(
     page.getByRole('row').filter({ hasText: servicePrice })
-  ).toHaveCount(0);
+  ).toHaveCount(countBefore - 1, { timeout: 10000 });
 });
