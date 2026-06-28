@@ -1,0 +1,13 @@
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/.auth/
+
+# Environment (contains credentials — never commit)
+.env.test
+.env*.local
+.env
