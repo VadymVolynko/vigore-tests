@@ -41,6 +41,11 @@ test('Create team member without services and locations', async ({ page }) => {
 
   await memberRow.getByRole('button').last().click();
 
+  await page
+    .getByRole('list')
+    .getByRole('button', { name: 'Delete' })
+    .click();
+
   await expect(
     page.getByRole('heading', { name: /delete/i })
   ).toBeVisible({ timeout: 5000 });

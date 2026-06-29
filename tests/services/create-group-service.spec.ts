@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { login } from '../../helpers/auth.helper';
 
 test('Create group service', async ({ page }) => {
-  const serviceName = 'Auto Group Service';
+  const serviceName = `Auto Group Service ${Date.now()}`;
 
   await test.step('Login and wait for dashboard', async () => {
     await login(page);
@@ -66,8 +66,8 @@ test('Create group service', async ({ page }) => {
     await saveButton.click();
 
     await expect(
-      page.getByText(/created successfully/i)
-    ).toBeVisible({ timeout: 10000 });
+      page.getByRole('heading', { name: 'Create a service' })
+    ).not.toBeVisible({ timeout: 10000 });
   });
 
   await test.step('Verify group service was created', async () => {
